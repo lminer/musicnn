@@ -1,6 +1,9 @@
 import os
+
 import numpy as np
 import librosa
+import soundfile as sf
+import scipy.signal as sps
 
 import tensorflow as tf
 
@@ -39,9 +42,14 @@ def batch_data(audio_file, n_frames, overlap):
     '''
 
     # compute the log-mel spectrogram with librosa
-    audio, sr = librosa.load(audio_file, sr=config.SR)
+    audio, sr = sf.read(audio_file, dtype='float32')
+    audio = audio.T
+    audio = librosa.to_mono(audio)
+    downsample_factor = int(sr / config.SR)
+    audio = sps.decimate(audio, downsample_factor)
+
     audio_rep = librosa.feature.melspectrogram(y=audio,
-                                               sr=sr,
+                                               sr=config.SR,
                                                hop_length=config.FFT_HOP,
                                                n_fft=config.FFT_SIZE,
                                                n_mels=config.N_MELS).T
@@ -229,7 +237,6 @@ def extractor(file_name, model='MTT_musicnn', input_length=3, input_overlap=Fals
             raise ValueError('MSD_vgg model is still training... will be available soon! :)')
 
     # batching data
-    print('Computing spectrogram (w/ librosa) and tags (w/ tensorflow)..', end=" ")
     batch, spectrogram = batch_data(file_name, n_frames, overlap)
 
     # tensorflow: extract features and tags
@@ -302,7 +309,6 @@ def extractor(file_name, model='MTT_musicnn', input_length=3, input_overlap=Fals
         taggram = np.concatenate((taggram, np.array(predicted_tags)), axis=0)
 
     sess.close()
-    print('done!')
 
     if extract_features:
         return taggram, labels, features
