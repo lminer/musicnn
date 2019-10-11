@@ -47,6 +47,7 @@ def batch_data(audio_file, n_frames, overlap):
     audio = librosa.to_mono(audio)
     downsample_factor = int(sr / config.SR)
     audio = sps.decimate(audio, downsample_factor)
+    audio = np.asfortranarray(audio)
 
     audio_rep = librosa.feature.melspectrogram(y=audio,
                                                sr=config.SR,
