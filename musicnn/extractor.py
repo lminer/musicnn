@@ -59,6 +59,7 @@ def batch_data(audio_file, n_frames, overlap):
 
     # batch it for an efficient computing
     first = True
+    batch = None
     last_frame = audio_rep.shape[0] - n_frames + 1
     # +1 is to include the last frame that range would not include
     for time_stamp in range(0, last_frame, overlap):
@@ -117,6 +118,9 @@ class Extractor:
 
     def infer(self, file_name):
         batch, spectrogram = batch_data(file_name, self.n_frames, self.overlap)
+        if batch is None:
+            return ['NO DATA'] * len(self.labels)
+
         tags_pred = self.sess.run(self.pred, feed_dict={self.x: batch[:config.BATCH_SIZE], self.train: False})
 
         taggram = np.array(tags_pred)
