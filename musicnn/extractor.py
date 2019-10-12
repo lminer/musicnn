@@ -135,10 +135,12 @@ class Extractor:
 
         tags_likelihood_mean = np.mean(taggram, axis=0)
         ordered_tags = []
+        ordered_likelihoods = []
         for tag_index in tags_likelihood_mean.argsort()[::-1]:
             ordered_tags.append(self.labels[tag_index])
+            ordered_likelihoods.append(tags_likelihood_mean[tag_index])
 
-        return ordered_tags
+        return ordered_tags, ordered_likelihoods
 
 
 def extractor(file_name, model='MTT_musicnn', input_length=3, input_overlap=False, extract_features=True):
