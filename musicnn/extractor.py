@@ -133,7 +133,7 @@ class Extractor:
 
             taggram = np.concatenate((taggram, np.array(tags_pred)), axis=0)
 
-        return np.mean(taggram, axis=0), self.labels
+        return np.mean(taggram, axis=0)
 
 
 def extractor(file_name, model='MTT_musicnn', input_length=3, input_overlap=False, extract_features=True):
