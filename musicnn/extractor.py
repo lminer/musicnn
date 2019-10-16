@@ -118,8 +118,6 @@ class Extractor:
 
     def infer(self, file_name):
         batch, spectrogram = batch_data(file_name, self.n_frames, self.overlap)
-        if batch is None:
-            return ['NO DATA'] * len(self.labels), [0] * len(self.labels)
 
         tags_pred = self.sess.run(self.pred, feed_dict={self.x: batch[:config.BATCH_SIZE], self.train: False})
 
